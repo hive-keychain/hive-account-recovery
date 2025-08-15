@@ -13,7 +13,7 @@ export default function ChangeKeys() {
         <Card.Body>
           <div className="row justify-content-center">
             <InputGroup className="w-100" style={{ maxWidth: "500px" }}>
-              <UsernameInput />
+              <UsernameInput onChangeCallback={() => {}} />
               <Button variant="outline-secondary" onClick={() => {}}>
                 Change Keys
               </Button>

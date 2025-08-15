@@ -31,6 +31,7 @@ export default function AccountRecovery() {
         <Card.Body>
           <div className="row justify-content-center">
             <InputGroup className="w-100" style={{ maxWidth: "500px" }}>
+              <InputGroup.Text>@</InputGroup.Text>
               <UsernameInput onChangeCallback={setUsernameInput} />
               <Button
                 variant="outline-secondary"
