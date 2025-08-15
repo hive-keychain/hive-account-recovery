@@ -80,7 +80,7 @@ export default function AccountRecovery() {
               </Button>
             </InputGroup>
           </div>
-          <div className="row justify-content-center mt-3 ">
+          <div className="mt-3 ">
             {isLoading ? (
               <div className="d-flex flex-column align-items-center">
                 <Spinner />
