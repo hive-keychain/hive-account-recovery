@@ -1,10 +1,15 @@
 import { Card } from "react-bootstrap";
 
-export default function RecoveryAccountCard() {
+export default function RecoveryAccountCard({
+  recoveryAccount,
+}: {
+  recoveryAccount: string;
+}) {
   return (
     <Card>
       <Card.Body>
-        <Card.Title>Account Recovery</Card.Title>
+        <Card.Title>Recovery Account</Card.Title>
+        <Card.Text>{recoveryAccount}</Card.Text>
       </Card.Body>
     </Card>
   );
