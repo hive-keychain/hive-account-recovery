@@ -1,4 +1,4 @@
-import { Client } from "@hiveio/dhive";
+import { Client, PrivateKey } from "@hiveio/dhive";
 import * as Hive from "@hiveio/dhive";
 
 let client: Client;
@@ -25,7 +25,27 @@ const getRecoveryAccount = async (username: string) => {
   return account[0].recovery_account;
 };
 
+const getPrivateKeyFromSeed = (seed: string): Hive.PrivateKey => {
+  return PrivateKey.fromSeed(seed);
+};
+const generateNewSetOfKeys = (username: string) => {
+  const masterPasswordSeed = username + Date.now() + Math.random();
+  const ownerPrivateKeySeed = username + Date.now() + Math.random();
+  const activePrivateKeySeed = username + Date.now() + Math.random();
+  const postingPrivateKeySeed = username + Date.now() + Math.random();
+  const memoPrivateKeySeed = username + Date.now() + Math.random();
+
+  const masterPassword = getPrivateKeyFromSeed(masterPasswordSeed);
+  const ownerPrivateKey = getPrivateKeyFromSeed(ownerPrivateKeySeed);
+  const activePrivateKey = getPrivateKeyFromSeed(activePrivateKeySeed);
+  const postingPrivateKey = getPrivateKeyFromSeed(postingPrivateKeySeed);
+  const memoPrivateKey = getPrivateKeyFromSeed(memoPrivateKeySeed);
+  return { masterPassword, ownerPrivateKey, activePrivateKey, postingPrivateKey, memoPrivateKey };
+};
+
 export const AccountUtils = {
   getAccount,
   getRecoveryAccount,
+  getPrivateKeyFromSeed,
+  generateNewSetOfKeys,
 };  
