@@ -19,13 +19,17 @@ export function meta({}: Route.MetaArgs) {
 
 export default function AccountRecovery() {
   const [usernameInput, setUsernameInput] = useState<string>("");
-  const [recoveryAccountUsername, setRecoveryAccountUsername] =
-    useState<string>("");
+  const [recoveryAccountUsername, setRecoveryAccountUsername] = useState<
+    string | undefined
+  >(undefined);
+  const [noRecoveryAccount, setNoRecoveryAccount] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [recoveryAccountData, setRecoveryAccountData] = useState<
     RecoveryAccountRow | undefined
   >(undefined);
   const getAccount = async (username: string) => {
+    setNoRecoveryAccount(false);
+    setRecoveryAccountData(undefined);
     const recAccountUsername = await AccountUtils.getRecoveryAccount(username);
     setRecoveryAccountUsername(recAccountUsername);
   };
@@ -37,10 +41,14 @@ export default function AccountRecovery() {
         .then((row) => {
           if (row) {
             setRecoveryAccountData(row);
+            setNoRecoveryAccount(false);
+          } else {
+            setNoRecoveryAccount(true);
           }
         })
         .finally(() => {
           setIsLoading(false);
+          setRecoveryAccountUsername(undefined);
         });
     }
   }, [recoveryAccountUsername]);
@@ -50,7 +58,9 @@ export default function AccountRecovery() {
       <Card className="w-100" style={{ maxWidth: "500px" }}>
         <Card.Header>
           <Card.Title>Account Recovery</Card.Title>
-          <Card.Text>Enter your username to recover your account.</Card.Text>
+          <Card.Text>
+            Enter your username to search for your recovery account.
+          </Card.Text>
         </Card.Header>
         <Card.Body>
           <div className="row justify-content-center">
@@ -77,9 +87,14 @@ export default function AccountRecovery() {
                 <p>Fetching recovery account...</p>
               </div>
             ) : (
-              recoveryAccountData && (
-                <RecoveryAccountCard recoveryAccount={recoveryAccountData} />
-              )
+              <>
+                {recoveryAccountData && !noRecoveryAccount && (
+                  <RecoveryAccountCard recoveryAccount={recoveryAccountData} />
+                )}
+                {noRecoveryAccount && (
+                  <p>No recovery account found for this username.</p>
+                )}
+              </>
             )}
           </div>
         </Card.Body>
