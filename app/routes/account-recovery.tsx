@@ -1,10 +1,14 @@
 import UsernameInput from "~/components/username-input";
 import type { Route } from "../+types/root";
 import Button from "~/components/button";
-import { Card, InputGroup } from "react-bootstrap";
-import { useState } from "react";
+import { Card, InputGroup, Spinner } from "react-bootstrap";
+import { useEffect, useState } from "react";
 import { AccountUtils } from "~/hive-utils/account-utils";
 import RecoveryAccountCard from "~/components/cards/recovery-account-card";
+import {
+  getRowByUsername,
+  type RecoveryAccountRow,
+} from "~/utils/spreadsheet-utils/speadsheet-utils";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -15,11 +19,31 @@ export function meta({}: Route.MetaArgs) {
 
 export default function AccountRecovery() {
   const [usernameInput, setUsernameInput] = useState<string>("");
-  const [recoveryAccount, setRecoveryAccount] = useState<string>("");
+  const [recoveryAccountUsername, setRecoveryAccountUsername] =
+    useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [recoveryAccountData, setRecoveryAccountData] = useState<
+    RecoveryAccountRow | undefined
+  >(undefined);
   const getAccount = async (username: string) => {
-    const recoveryAccount = await AccountUtils.getRecoveryAccount(username);
-    setRecoveryAccount(recoveryAccount);
+    const recAccountUsername = await AccountUtils.getRecoveryAccount(username);
+    setRecoveryAccountUsername(recAccountUsername);
   };
+
+  useEffect(() => {
+    if (recoveryAccountUsername) {
+      setIsLoading(true);
+      getRowByUsername(recoveryAccountUsername)
+        .then((row) => {
+          if (row) {
+            setRecoveryAccountData(row);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [recoveryAccountUsername]);
 
   return (
     <div className="container mt-4 d-flex flex-column justify-content-center align-items-center">
@@ -32,7 +56,10 @@ export default function AccountRecovery() {
           <div className="row justify-content-center">
             <InputGroup className="w-100" style={{ maxWidth: "500px" }}>
               <InputGroup.Text>@</InputGroup.Text>
-              <UsernameInput onChangeCallback={setUsernameInput} />
+              <UsernameInput
+                onChangeCallback={setUsernameInput}
+                onEnterCallback={() => getAccount(usernameInput)}
+              />
               <Button
                 variant="outline-secondary"
                 onClick={() => {
@@ -44,8 +71,15 @@ export default function AccountRecovery() {
             </InputGroup>
           </div>
           <div className="row justify-content-center mt-3 ">
-            {recoveryAccount && (
-              <RecoveryAccountCard recoveryAccount={recoveryAccount} />
+            {isLoading ? (
+              <div className="d-flex flex-column align-items-center">
+                <Spinner />
+                <p>Fetching recovery account...</p>
+              </div>
+            ) : (
+              recoveryAccountData && (
+                <RecoveryAccountCard recoveryAccount={recoveryAccountData} />
+              )
             )}
           </div>
         </Card.Body>
