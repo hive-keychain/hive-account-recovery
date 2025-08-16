@@ -7,21 +7,30 @@ import UsernameInput from "~/components/username-input";
 import { AccountUtils } from "~/hive-utils/account-utils";
 import * as Hive from "@hiveio/dhive";
 import AccountUpdateModal from "~/components/modals/account-update-modal";
+import type { IAuthorities } from "~/interfaces/account.interface";
+import BroadcastUpdateModal from "~/components/modals/broadcast-update-modal";
 
 export default function ChangeKeys() {
   const [keysCopied, setKeysCopied] = useState(false);
   const [copyKeysToClipboard, setCopyKeysToClipboard] = useState(false);
   const [understandKeysOutsideKeychain, setUnderstandKeysOutsideKeychain] =
     useState(false);
-  const [newKeys, setNewKeys] = useState<{
-    masterPassword: Hive.PrivateKey;
-    ownerPrivateKey: Hive.PrivateKey;
-    activePrivateKey: Hive.PrivateKey;
-    postingPrivateKey: Hive.PrivateKey;
-    memoPrivateKey: Hive.PrivateKey;
-  } | null>(null);
+  const [newKeys, setNewKeys] = useState<
+    | {
+        masterPassword: Hive.PrivateKey;
+        ownerPrivateKey: Hive.PrivateKey;
+        activePrivateKey: Hive.PrivateKey;
+        postingPrivateKey: Hive.PrivateKey;
+        memoPrivateKey: Hive.PrivateKey;
+      }
+    | undefined
+  >(undefined);
   const [usernameInput, setUsernameInput] = useState("");
   const [showAccountUpdateModal, setShowAccountUpdateModal] = useState(false);
+  const [showBroadcastUpdateModal, setShowBroadcastUpdateModal] =
+    useState(false);
+  const [updatedAccountData, setUpdatedAccountData] =
+    useState<IAuthorities | null>(null);
   const generateKeys = async (username: string) => {
     setUnderstandKeysOutsideKeychain(false);
     setCopyKeysToClipboard(false);
@@ -50,6 +59,27 @@ export default function ChangeKeys() {
       return false;
     }
     return true;
+  };
+
+  const handleNext = () => {
+    if (newKeys) {
+      const newAuthorities = AccountUtils.createNewAuthoritiesFromKeys(
+        usernameInput,
+        newKeys
+      );
+      AccountUtils.getUpdatedAccountData(usernameInput, newAuthorities).then(
+        (data) => {
+          setUpdatedAccountData(data);
+        }
+      );
+      setShowAccountUpdateModal(true);
+    }
+  };
+  const handleUpdate = () => {
+    if (updatedAccountData) {
+      setShowAccountUpdateModal(false);
+      setShowBroadcastUpdateModal(true);
+    }
   };
   return (
     <div className="container mt-4 d-flex flex-column justify-content-center align-items-center">
@@ -135,7 +165,7 @@ export default function ChangeKeys() {
                       : "outline-secondary"
                   }
                   onClick={() => {
-                    setShowAccountUpdateModal(true);
+                    handleNext();
                   }}
                   disabled={
                     !(understandKeysOutsideKeychain && copyKeysToClipboard)
@@ -148,15 +178,25 @@ export default function ChangeKeys() {
           )}
         </Card.Body>
       </Card>
-      {showAccountUpdateModal && newKeys && (
+      {showAccountUpdateModal && newKeys && updatedAccountData && (
         <AccountUpdateModal
           username={usernameInput}
-          newAuthorities={AccountUtils.createNewAuthoritiesFromKeys(
-            usernameInput,
-            newKeys!
-          )}
-          method={"active"}
-          onCancel={() => setShowAccountUpdateModal(false)}
+          updatedAccountData={updatedAccountData}
+          show={showAccountUpdateModal}
+          onCancel={() => {
+            setShowAccountUpdateModal(false);
+            setShowBroadcastUpdateModal(false);
+          }}
+          onUpdate={() => {
+            handleUpdate();
+          }}
+        />
+      )}
+      {showBroadcastUpdateModal && updatedAccountData && (
+        <BroadcastUpdateModal
+          updatedAccountData={updatedAccountData}
+          onCancel={() => setShowBroadcastUpdateModal(false)}
+          show={showBroadcastUpdateModal}
         />
       )}
     </div>
