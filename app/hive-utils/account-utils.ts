@@ -51,12 +51,15 @@ const generateNewSetOfKeys = (username: string) => {
 };
 
 const accountUpdateBroadcast = async (
-  username: string,
   newAuthorities: IAuthorities,
-  method: string
+  ownerKey: string
 ) => {
   const client = getClient();
-  const account = await client.database.getAccounts([username]);
+  const result = await client.broadcast.updateAccount(
+    newAuthorities,
+    Hive.PrivateKey.fromString(ownerKey)
+  );
+  return result;
 };
 
 const createNewAuthoritiesFromKeys = (
@@ -95,7 +98,7 @@ const createNewAuthoritiesFromKeys = (
 const getUpdatedAccountData = async (
   username: string,
   newAuthorities: IAuthorities
-) => {
+): Promise<IAuthorities> => {
   const client = getClient();
   const account = await client.database.getAccounts([username]);
   const newAccountData = {
