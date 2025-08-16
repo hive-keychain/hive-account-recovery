@@ -6,6 +6,7 @@ import CheckBox from "~/components/check-box";
 import UsernameInput from "~/components/username-input";
 import { AccountUtils } from "~/hive-utils/account-utils";
 import * as Hive from "@hiveio/dhive";
+import AccountUpdateModal from "~/components/modals/account-update-modal";
 
 export default function ChangeKeys() {
   const [keysCopied, setKeysCopied] = useState(false);
@@ -20,7 +21,7 @@ export default function ChangeKeys() {
     memoPrivateKey: Hive.PrivateKey;
   } | null>(null);
   const [usernameInput, setUsernameInput] = useState("");
-
+  const [showAccountUpdateModal, setShowAccountUpdateModal] = useState(false);
   const generateKeys = async (username: string) => {
     setUnderstandKeysOutsideKeychain(false);
     setCopyKeysToClipboard(false);
@@ -133,7 +134,9 @@ export default function ChangeKeys() {
                       ? "outline-primary"
                       : "outline-secondary"
                   }
-                  onClick={() => {}}
+                  onClick={() => {
+                    setShowAccountUpdateModal(true);
+                  }}
                   disabled={
                     !(understandKeysOutsideKeychain && copyKeysToClipboard)
                   }
@@ -145,6 +148,17 @@ export default function ChangeKeys() {
           )}
         </Card.Body>
       </Card>
+      {showAccountUpdateModal && newKeys && (
+        <AccountUpdateModal
+          username={usernameInput}
+          newAuthorities={AccountUtils.createNewAuthoritiesFromKeys(
+            usernameInput,
+            newKeys!
+          )}
+          method={"active"}
+          onCancel={() => setShowAccountUpdateModal(false)}
+        />
+      )}
     </div>
   );
 }

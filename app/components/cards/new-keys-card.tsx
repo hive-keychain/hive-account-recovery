@@ -1,6 +1,7 @@
 import { Button, Card } from "react-bootstrap";
 import type { KeyCardProps } from "./key-card";
 import KeyCard from "./key-card";
+import { useState } from "react";
 
 export default function NewKeysCard({
   username,
@@ -26,7 +27,12 @@ export default function NewKeysCard({
 
         <div className="mt-3">
           <div className="d-flex justify-content-end">
-            <Button variant="outline-secondary" onClick={copyKeysToClipboard}>
+            <Button
+              variant="outline-secondary"
+              onClick={() => {
+                copyKeysToClipboard();
+              }}
+            >
               Copy Keys to Clipboard
             </Button>
           </div>

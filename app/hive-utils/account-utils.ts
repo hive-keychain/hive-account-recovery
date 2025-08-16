@@ -1,5 +1,6 @@
 import { Client, PrivateKey } from "@hiveio/dhive";
 import * as Hive from "@hiveio/dhive";
+import type { IAuthorities } from "~/interfaces/account.interface";
 
 let client: Client;
 const getClient = () => {
@@ -40,7 +41,78 @@ const generateNewSetOfKeys = (username: string) => {
   const activePrivateKey = getPrivateKeyFromSeed(activePrivateKeySeed);
   const postingPrivateKey = getPrivateKeyFromSeed(postingPrivateKeySeed);
   const memoPrivateKey = getPrivateKeyFromSeed(memoPrivateKeySeed);
-  return { masterPassword, ownerPrivateKey, activePrivateKey, postingPrivateKey, memoPrivateKey };
+  return {
+    masterPassword,
+    ownerPrivateKey,
+    activePrivateKey,
+    postingPrivateKey,
+    memoPrivateKey,
+  };
+};
+
+const accountUpdateBroadcast = async (
+  username: string,
+  newAuthorities: IAuthorities,
+  method: string
+) => {
+  const client = getClient();
+  const account = await client.database.getAccounts([username]);
+};
+
+const createNewAuthoritiesFromKeys = (
+  username: string,
+  keys: {
+    masterPassword: Hive.PrivateKey;
+    ownerPrivateKey: Hive.PrivateKey;
+    activePrivateKey: Hive.PrivateKey;
+    postingPrivateKey: Hive.PrivateKey;
+    memoPrivateKey: Hive.PrivateKey;
+  }
+) => {
+  return {
+    account: username,
+    masterPassword: keys.masterPassword.toString(),
+    owner: {
+      weight_threshold: 1,
+      account_auths: [],
+      key_auths: [[keys.ownerPrivateKey.createPublic().toString(), 1]],
+    },
+    active: {
+      weight_threshold: 1,
+      account_auths: [],
+      key_auths: [[keys.activePrivateKey.createPublic().toString(), 1]],
+    },
+    posting: {
+      weight_threshold: 1,
+      account_auths: [],
+      key_auths: [[keys.postingPrivateKey.createPublic().toString(), 1]],
+    },
+    memo_key: keys.memoPrivateKey.createPublic().toString(),
+    json_metadata: "",
+  } as IAuthorities;
+};
+
+const getUpdatedAccountData = async (
+  username: string,
+  newAuthorities: IAuthorities
+) => {
+  const client = getClient();
+  const account = await client.database.getAccounts([username]);
+  const newAccountData = {
+    account: account[0].name,
+    owner: { ...account[0].owner, key_auths: newAuthorities.owner.key_auths },
+    active: {
+      ...account[0].active,
+      key_auths: newAuthorities.active.key_auths,
+    },
+    posting: {
+      ...account[0].posting,
+      key_auths: newAuthorities.posting.key_auths,
+    },
+    memo_key: newAuthorities.memo_key,
+    json_metadata: account[0].json_metadata,
+  };
+  return newAccountData;
 };
 
 export const AccountUtils = {
@@ -48,4 +120,7 @@ export const AccountUtils = {
   getRecoveryAccount,
   getPrivateKeyFromSeed,
   generateNewSetOfKeys,
-};  
+  accountUpdateBroadcast,
+  createNewAuthoritiesFromKeys,
+  getUpdatedAccountData,
+};
