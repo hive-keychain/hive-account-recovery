@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Form } from "react-bootstrap";
 
 export default function UsernameInput({
@@ -9,6 +10,7 @@ export default function UsernameInput({
   onEnterCallback?: Function;
   value?: string;
 }) {
+  const [inputValue, setInputValue] = useState(value);
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && onEnterCallback) {
       onEnterCallback();
@@ -19,9 +21,12 @@ export default function UsernameInput({
     <Form.Control
       type="text"
       placeholder="Enter username"
-      onChange={(e) => onChangeCallback(e.target.value)}
+      onChange={(e) => {
+        setInputValue(e.target.value);
+        onChangeCallback(e.target.value);
+      }}
       onKeyDown={handleKeyDown}
-      value={value}
+      value={inputValue}
     />
   );
 }
