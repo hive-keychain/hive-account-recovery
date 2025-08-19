@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { AccountUtils } from "~/hive-utils/account-utils";
 import RecoveryAccountCard from "~/components/cards/recovery-account-card";
 import {
-  getRowByUsername,
+  SpreadsheetUtils,
   type RecoveryAccountRow,
 } from "~/utils/spreadsheet-utils/speadsheet-utils";
+import { Config } from "~/utils/Config";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -27,6 +28,7 @@ export default function AccountRecovery() {
   const [recoveryAccountData, setRecoveryAccountData] = useState<
     RecoveryAccountRow | undefined
   >(undefined);
+
   const getAccount = async (username: string) => {
     setNoRecoveryAccount(false);
     setRecoveryAccountData(undefined);
@@ -37,7 +39,10 @@ export default function AccountRecovery() {
   useEffect(() => {
     if (recoveryAccountUsername) {
       setIsLoading(true);
-      getRowByUsername(recoveryAccountUsername)
+      SpreadsheetUtils.getRecoveryByRecoveryUsernameFromHtmlView(
+        Config.spreadsheetUrl,
+        recoveryAccountUsername
+      )
         .then((row) => {
           if (row) {
             setRecoveryAccountData(row);
@@ -68,7 +73,10 @@ export default function AccountRecovery() {
               <InputGroup.Text>@</InputGroup.Text>
               <UsernameInput
                 onChangeCallback={setUsernameInput}
-                onEnterCallback={() => getAccount(usernameInput)}
+                onEnterCallback={() => {
+                  getAccount(usernameInput);
+                }}
+                value={usernameInput}
               />
               <Button
                 variant="outline-secondary"
