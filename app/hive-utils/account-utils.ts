@@ -95,6 +95,14 @@ const createNewAuthoritiesFromKeys = (
   } as IAuthorities;
 };
 
+const getAccountAvatarUrl = async (username: string): Promise<string> => {
+  const client = getClient();
+  const account = await client.database.getAccounts([username]);
+  const profileJson = JSON.parse(account[0].posting_json_metadata).profile;
+  const avatarUrl = profileJson.profile_image;
+  return avatarUrl;
+};
+
 const getUpdatedAccountData = async (
   username: string,
   newAuthorities: IAuthorities
@@ -126,4 +134,5 @@ export const AccountUtils = {
   accountUpdateBroadcast,
   createNewAuthoritiesFromKeys,
   getUpdatedAccountData,
+  getAccountAvatarUrl,
 };
