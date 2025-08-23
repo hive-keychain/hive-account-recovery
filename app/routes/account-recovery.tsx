@@ -23,41 +23,61 @@ export default function AccountRecovery() {
   const [recoveryAccountUsername, setRecoveryAccountUsername] = useState<
     string | undefined
   >(undefined);
-  const [noRecoveryAccount, setNoRecoveryAccount] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [recoveryAccountData, setRecoveryAccountData] = useState<
     RecoveryAccountRow | undefined
   >(undefined);
 
   const getAccount = async (username: string) => {
-    setNoRecoveryAccount(false);
-    setRecoveryAccountData(undefined);
-    const recAccountUsername = await AccountUtils.getRecoveryAccount(username);
-    console.log({ recAccountUsername });
-    setRecoveryAccountUsername(recAccountUsername);
+    if (username === "") {
+      return;
+    }
+    try {
+      const recAccountUsername =
+        await AccountUtils.getRecoveryAccount(username);
+      setRecoveryAccountUsername(recAccountUsername);
+      if (recAccountUsername && recAccountUsername !== "") {
+        setIsLoading(true);
+        SpreadsheetUtils.getRecoveryByRecoveryUsernameFromHtmlView(
+          Config.spreadsheetUrl,
+          recAccountUsername
+        )
+          .then((row) => {
+            if (row) {
+              setRecoveryAccountData(row);
+            } else {
+              setRecoveryAccountData(undefined);
+            }
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }
+    } catch (error) {
+      console.error(error);
+      setRecoveryAccountData(undefined);
+    }
   };
 
-  useEffect(() => {
-    if (recoveryAccountUsername) {
-      setIsLoading(true);
-      SpreadsheetUtils.getRecoveryByRecoveryUsernameFromHtmlView(
-        Config.spreadsheetUrl,
-        recoveryAccountUsername
-      )
-        .then((row) => {
-          if (row) {
-            setRecoveryAccountData(row);
-            setNoRecoveryAccount(false);
-          } else {
-            setNoRecoveryAccount(true);
-          }
-        })
-        .finally(() => {
-          setIsLoading(false);
-          setRecoveryAccountUsername(undefined);
-        });
+  const displayRecoveryAccountData = () => {
+    if (
+      recoveryAccountUsername === "" ||
+      recoveryAccountUsername === undefined
+    ) {
+      return <p>You haven't set a recovery account</p>;
+    } else if (recoveryAccountData === undefined && recoveryAccountUsername) {
+      return (
+        <p>
+          Your recovery account is @{recoveryAccountUsername}. Please contact
+          them to try and recover you account.
+        </p>
+      );
+    } else if (recoveryAccountData && recoveryAccountUsername) {
+      return <RecoveryAccountCard recoveryAccount={recoveryAccountData} />;
+    } else {
+      return "";
     }
-  }, [recoveryAccountUsername]);
+  };
 
   return (
     <div className="container mt-4 d-flex flex-column justify-content-center align-items-center">
@@ -96,14 +116,7 @@ export default function AccountRecovery() {
                 <p>Fetching recovery account...</p>
               </div>
             ) : (
-              <>
-                {recoveryAccountData && !noRecoveryAccount && (
-                  <RecoveryAccountCard recoveryAccount={recoveryAccountData} />
-                )}
-                {noRecoveryAccount && (
-                  <p>No recovery account found for this username.</p>
-                )}
-              </>
+              <>{displayRecoveryAccountData()}</>
             )}
           </div>
         </Card.Body>
