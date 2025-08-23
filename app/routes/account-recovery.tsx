@@ -60,10 +60,7 @@ export default function AccountRecovery() {
   };
 
   const displayRecoveryAccountData = () => {
-    if (
-      recoveryAccountUsername === "" ||
-      recoveryAccountUsername === undefined
-    ) {
+    if (recoveryAccountUsername === undefined) {
       return <p>You haven't set a recovery account</p>;
     } else if (recoveryAccountData === undefined && recoveryAccountUsername) {
       return (
