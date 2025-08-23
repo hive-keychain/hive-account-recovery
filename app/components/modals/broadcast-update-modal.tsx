@@ -3,7 +3,7 @@ import type { IAuthorities } from "~/interfaces/account.interface";
 import { KeyInput } from "../key-input";
 import { useEffect, useState } from "react";
 import Button from "../button";
-import { AccountUtils } from "~/hive-utils/account-utils";
+import { AccountUtils } from "~/utils/hive-utils/account-utils";
 
 export interface BroadcastUpdateModalProps {
   updatedAccountData: IAuthorities;

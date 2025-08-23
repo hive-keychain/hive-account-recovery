@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, Image, Placeholder } from "react-bootstrap";
-import { AccountUtils } from "~/hive-utils/account-utils";
+import { AccountUtils } from "~/utils/hive-utils/account-utils";
 import type { RecoveryAccountRow } from "~/utils/spreadsheet-utils/speadsheet-utils";
 
 export default function RecoveryAccountCard({

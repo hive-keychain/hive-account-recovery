@@ -1,6 +1,6 @@
 import { Button, Form, ListGroup, Modal } from "react-bootstrap";
 import type { IAuthorities } from "~/interfaces/account.interface";
-import { AccountUtils } from "~/hive-utils/account-utils";
+import { AccountUtils } from "~/utils/hive-utils/account-utils";
 import { useEffect, useState } from "react";
 import { AuthorityCard } from "../cards/authority-card";
 import { Spinner } from "react-bootstrap";

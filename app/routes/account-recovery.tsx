@@ -3,7 +3,7 @@ import type { Route } from "../+types/root";
 import Button from "~/components/button";
 import { Card, InputGroup, Spinner } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { AccountUtils } from "~/hive-utils/account-utils";
+import { AccountUtils } from "~/utils/hive-utils/account-utils";
 import RecoveryAccountCard from "~/components/cards/recovery-account-card";
 import {
   SpreadsheetUtils,
@@ -33,6 +33,7 @@ export default function AccountRecovery() {
     setNoRecoveryAccount(false);
     setRecoveryAccountData(undefined);
     const recAccountUsername = await AccountUtils.getRecoveryAccount(username);
+    console.log({ recAccountUsername });
     setRecoveryAccountUsername(recAccountUsername);
   };
 

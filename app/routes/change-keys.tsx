@@ -4,7 +4,7 @@ import Button from "~/components/button";
 import NewKeysCard from "~/components/cards/new-keys-card";
 import CheckBox from "~/components/check-box";
 import UsernameInput from "~/components/username-input";
-import { AccountUtils } from "~/hive-utils/account-utils";
+import { AccountUtils } from "~/utils/hive-utils/account-utils";
 import * as Hive from "@hiveio/dhive";
 import AccountUpdateModal from "~/components/modals/account-update-modal";
 import type { IAuthorities } from "~/interfaces/account.interface";
