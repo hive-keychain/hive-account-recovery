@@ -21,9 +21,14 @@ const getAccount = async (username: string) => {
 };
 
 const getRecoveryAccount = async (username: string) => {
-  client = getClient();
-  const account = await client.database.getAccounts([username]);
-  return account[0].recovery_account;
+  try {
+    client = getClient();
+    const account = await client.database.getAccounts([username]);
+    return account[0].recovery_account;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 };
 
 const getPrivateKeyFromSeed = (seed: string): Hive.PrivateKey => {
