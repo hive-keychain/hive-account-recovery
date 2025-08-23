@@ -22,7 +22,7 @@ export default function AccountRecovery() {
   const [usernameInput, setUsernameInput] = useState<string>("");
   const [recoveryAccountUsername, setRecoveryAccountUsername] = useState<
     string | undefined
-  >(undefined);
+  >("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [recoveryAccountData, setRecoveryAccountData] = useState<
     RecoveryAccountRow | undefined
