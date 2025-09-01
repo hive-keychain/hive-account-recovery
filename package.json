@@ -1,15 +1,15 @@
 {
-  "name": "hive-account-recovery-app",
+  "name": "hive-account-recovery",
   "private": true,
   "type": "module",
   "version": "1.0.0",
-  "description": "Hive Account Recovery App",
+  "description": "Hive Account Recovery",
   "author": "Hive Keychain",
   "license": "MIT",
   "homepage": ".",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hivekeychain/hive-account-recovery-app"
+    "url": "https://github.com/hive-keychain/hive-account-recovery"
   },
   "keywords": [
     "hive",
