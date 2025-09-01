@@ -10,7 +10,7 @@ const Footer = () => {
       }}
     >
       <div className="container text-center">
-        <div className="footer-text">@2023 Hive Keychain</div>
+        <div className="footer-text">@2025 Hive Keychain</div>
       </div>
     </footer>
   );

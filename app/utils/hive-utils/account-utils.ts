@@ -1,5 +1,5 @@
-import { Client, PrivateKey } from "@hiveio/dhive";
 import * as Hive from "@hiveio/dhive";
+import { Client, PrivateKey } from "@hiveio/dhive";
 import type { IAuthorities } from "~/interfaces/account.interface";
 
 let client: Client;
@@ -101,11 +101,7 @@ const createNewAuthoritiesFromKeys = (
 };
 
 const getAccountAvatarUrl = async (username: string): Promise<string> => {
-  const client = getClient();
-  const account = await client.database.getAccounts([username]);
-  const profileJson = JSON.parse(account[0].posting_json_metadata).profile;
-  const avatarUrl = profileJson.profile_image;
-  return avatarUrl;
+  return "https://images.hive.blog/u/" + username + "/avatar";
 };
 
 const getUpdatedAccountData = async (

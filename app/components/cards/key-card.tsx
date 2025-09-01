@@ -17,9 +17,7 @@ export default function KeyCard({
       <Card.Body>
         <Card.Title>{name}</Card.Title>
         {masterPassword && (
-          <Card.Text className="mb-1">
-            <b>Master Password:</b> {masterPassword}
-          </Card.Text>
+          <Card.Text className="mb-1">{masterPassword}</Card.Text>
         )}
         {privateKey && (
           <Card.Text className="mb-1">

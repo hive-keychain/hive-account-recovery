@@ -1,15 +1,16 @@
-import UsernameInput from "~/components/username-input";
-import type { Route } from "../+types/root";
-import Button from "~/components/button";
+import { useState } from "react";
 import { Card, InputGroup, Spinner } from "react-bootstrap";
-import { useEffect, useState } from "react";
-import { AccountUtils } from "~/utils/hive-utils/account-utils";
+import Button from "~/components/button";
 import RecoveryAccountCard from "~/components/cards/recovery-account-card";
+import RecoveryAccountAvatar from "~/components/recovery-account-avatar";
+import UsernameInput from "~/components/username-input";
+import { Config } from "~/utils/Config";
+import { AccountUtils } from "~/utils/hive-utils/account-utils";
 import {
   SpreadsheetUtils,
   type RecoveryAccountRow,
 } from "~/utils/spreadsheet-utils/speadsheet-utils";
-import { Config } from "~/utils/Config";
+import type { Route } from "../+types/root";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -64,10 +65,18 @@ export default function AccountRecovery() {
       return <p>You haven't set a recovery account</p>;
     } else if (recoveryAccountData === undefined && recoveryAccountUsername) {
       return (
-        <p>
-          Your recovery account is @{recoveryAccountUsername}. Please contact
-          them to try and recover you account.
-        </p>
+        <div className="d-flex flex-column align-items-center">
+          <div className="d-flex align-items-center gap-2">
+            <div>
+              <RecoveryAccountAvatar accountName={recoveryAccountUsername} />
+            </div>
+            <h4 className="mb-0">@{recoveryAccountUsername}</h4>
+          </div>
+          <p>
+            Your recovery account is @{recoveryAccountUsername}. Please contact
+            them to try and recover you account.
+          </p>
+        </div>
       );
     } else if (recoveryAccountData && recoveryAccountUsername) {
       return <RecoveryAccountCard recoveryAccount={recoveryAccountData} />;

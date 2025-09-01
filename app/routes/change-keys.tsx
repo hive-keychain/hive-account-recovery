@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import * as Hive from "@hiveio/dhive";
+import { useState } from "react";
 import { Card, InputGroup } from "react-bootstrap";
 import Button from "~/components/button";
 import NewKeysCard from "~/components/cards/new-keys-card";
 import CheckBox from "~/components/check-box";
-import UsernameInput from "~/components/username-input";
-import { AccountUtils } from "~/utils/hive-utils/account-utils";
-import * as Hive from "@hiveio/dhive";
 import AccountUpdateModal from "~/components/modals/account-update-modal";
-import type { IAuthorities } from "~/interfaces/account.interface";
 import BroadcastUpdateModal from "~/components/modals/broadcast-update-modal";
+import UsernameInput from "~/components/username-input";
+import type { IAuthorities } from "~/interfaces/account.interface";
+import { AccountUtils } from "~/utils/hive-utils/account-utils";
 
 export default function ChangeKeys() {
   const [keysCopied, setKeysCopied] = useState(false);
@@ -86,7 +86,7 @@ export default function ChangeKeys() {
       <Card className="w-100" style={{ maxWidth: "700px" }}>
         <Card.Header>
           <Card.Title>Change Keys</Card.Title>
-          <Card.Text>Enter your username to change your keys.</Card.Text>
+          <Card.Text>Enter your username to generate new keys.</Card.Text>
         </Card.Header>
         <Card.Body>
           <div className="row justify-content-center">
