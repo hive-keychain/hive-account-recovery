@@ -1,7 +1,9 @@
 import * as Hive from "@hiveio/dhive";
 import { Client, PrivateKey } from "@hiveio/dhive";
 import type { IAuthorities } from "~/interfaces/account.interface";
-
+import bs58 from "bs58";
+import { SHA256, enc, lib } from "crypto-js";
+import { Buffer } from "buffer";
 let client: Client;
 const getClient = () => {
   if (!client)
@@ -34,18 +36,30 @@ const getRecoveryAccount = async (username: string) => {
 const getPrivateKeyFromSeed = (seed: string): Hive.PrivateKey => {
   return PrivateKey.fromSeed(seed);
 };
+const generateMasterKey = () => {
+  const array = new Uint32Array(10);
+  crypto.getRandomValues(array);
+  return "P" + PrivateKey.fromSeed(array.toString()).toString();
+};
 const generateNewSetOfKeys = (username: string) => {
-  const masterPasswordSeed = username + Date.now() + Math.random();
-  const ownerPrivateKeySeed = username + Date.now() + Math.random();
-  const activePrivateKeySeed = username + Date.now() + Math.random();
-  const postingPrivateKeySeed = username + Date.now() + Math.random();
-  const memoPrivateKeySeed = username + Date.now() + Math.random();
+  const masterPassword = generateMasterKey();
+  const ownerPrivateKey = PrivateKey.fromLogin(
+    username,
+    masterPassword,
+    "owner"
+  );
+  const activePrivateKey = PrivateKey.fromLogin(
+    username,
+    masterPassword,
+    "active"
+  );
+  const postingPrivateKey = PrivateKey.fromLogin(
+    username,
+    masterPassword,
+    "posting"
+  );
+  const memoPrivateKey = PrivateKey.fromLogin(username, masterPassword, "memo");
 
-  const masterPassword = getPrivateKeyFromSeed(masterPasswordSeed);
-  const ownerPrivateKey = getPrivateKeyFromSeed(ownerPrivateKeySeed);
-  const activePrivateKey = getPrivateKeyFromSeed(activePrivateKeySeed);
-  const postingPrivateKey = getPrivateKeyFromSeed(postingPrivateKeySeed);
-  const memoPrivateKey = getPrivateKeyFromSeed(memoPrivateKeySeed);
   return {
     masterPassword,
     ownerPrivateKey,
@@ -57,14 +71,23 @@ const generateNewSetOfKeys = (username: string) => {
 
 const accountUpdateBroadcast = async (
   newAuthorities: IAuthorities,
-  ownerKey: string
+  password: string
 ) => {
   const client = getClient();
-  const result = await client.broadcast.updateAccount(
-    newAuthorities,
-    Hive.PrivateKey.fromString(ownerKey)
-  );
-  return result;
+  const wif = isWif(password);
+  if (wif) {
+    const result = await client.broadcast.updateAccount(
+      newAuthorities,
+      Hive.PrivateKey.fromString(password)
+    );
+    return result;
+  }
+  const owner = derivateFromMasterPassword(newAuthorities.account, password);
+  if (owner) {
+    const result = await client.broadcast.updateAccount(newAuthorities, owner);
+    return result;
+  }
+  throw new Error("Invalid password: Neither WIF nor master password format");
 };
 
 const createNewAuthoritiesFromKeys = (
@@ -127,6 +150,34 @@ const getUpdatedAccountData = async (
   return newAccountData;
 };
 
+const derivateFromMasterPassword = (
+  username: string,
+  password: string
+): Hive.PrivateKey | null => {
+  const owner = PrivateKey.fromLogin(username, password, "owner");
+  return owner;
+};
+const sha256 = (input: any): Buffer => {
+  if (typeof input !== "string") {
+    input = lib.WordArray.create(input);
+  }
+  const hash = Buffer.from(SHA256(input).toString(enc.Hex), "hex");
+  return hash;
+};
+const isWif = (privWif: string | Buffer): boolean => {
+  try {
+    const bufWif = Buffer.from(bs58.decode(privWif as string));
+    const privKey = bufWif.slice(0, -4);
+    const checksum = bufWif.slice(-4);
+    let newChecksum = sha256(privKey);
+    newChecksum = sha256(newChecksum);
+    newChecksum = newChecksum.slice(0, 4);
+    return checksum.toString() === newChecksum.toString();
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+};
 export const AccountUtils = {
   getAccount,
   getRecoveryAccount,

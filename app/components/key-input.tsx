@@ -5,13 +5,13 @@ export const KeyInput = ({
   value,
   onChange,
 }: {
-  label: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) => {
   return (
     <InputGroup>
-      <InputGroup.Text>{label}</InputGroup.Text>
+      {label ? <InputGroup.Text>{label}</InputGroup.Text> : null}
       <Form.Control
         type="text"
         value={value}
