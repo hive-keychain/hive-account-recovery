@@ -14,7 +14,11 @@ import Footer from "./components/footer";
 import NavBar from "./components/nav-bar";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "icon", href: "/logohive.png", type: "image/png" },
+  {
+    rel: "icon",
+    href: "/logohive.png",
+    type: "image/png",
+  },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",

@@ -9,7 +9,14 @@ import BroadcastUpdateModal from "~/components/modals/broadcast-update-modal";
 import UsernameInput from "~/components/username-input";
 import type { IAuthorities } from "~/interfaces/account.interface";
 import { AccountUtils } from "~/utils/hive-utils/account-utils";
+import type { Route } from "../+types/root";
 
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Hive Change Keys" },
+    { name: "description", content: "Hive Change Keys" },
+  ];
+}
 export default function ChangeKeys() {
   const [keysCopied, setKeysCopied] = useState(false);
   const [copyKeysToClipboard, setCopyKeysToClipboard] = useState(false);
