@@ -12,6 +12,12 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import Footer from "./components/footer";
 import NavBar from "./components/nav-bar";
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Hive Account Recovery" },
+    { name: "description", content: "Hive Account Recovery" },
+  ];
+}
 
 export const links: Route.LinksFunction = () => [
   {
