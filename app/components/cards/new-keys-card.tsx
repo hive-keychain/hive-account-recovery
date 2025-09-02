@@ -13,9 +13,40 @@ export default function NewKeysCard({
   copyKeysToClipboardClickedCallback: () => void;
 }) {
   const copyKeysToClipboard = () => {
-    const keysString = JSON.stringify({ username, keys }, null, 2);
+    const keysString = generateKeysTextVersion(username, keys);
     navigator.clipboard.writeText(keysString);
     copyKeysToClipboardClickedCallback();
+  };
+
+  const generateKeysTextVersion = (username: string, keys: KeyCardProps[]) => {
+    return `
+Account name: @${username}
+Master password:
+${keys.find((key) => key.name === "Master Password")?.masterPassword}
+-----------------------------------------
+Owner key:
+Private
+${keys.find((key) => key.name === "Owner")?.privateKey}
+Public
+${keys.find((key) => key.name === "Owner")?.publicKey}
+-----------------------------------------
+Active key:
+Private
+${keys.find((key) => key.name === "Active")?.privateKey}
+Public
+${keys.find((key) => key.name === "Active")?.publicKey}
+-----------------------------------------
+Posting key:
+Private
+${keys.find((key) => key.name === "Posting")?.privateKey}
+Public
+${keys.find((key) => key.name === "Posting")?.publicKey}
+-----------------------------------------
+Memo key:
+Private
+${keys.find((key) => key.name === "Memo")?.privateKey}
+Public
+${keys.find((key) => key.name === "Memo")?.publicKey}`.trim();
   };
   return (
     <Card className="w-100" style={{ maxWidth: "700px" }}>
