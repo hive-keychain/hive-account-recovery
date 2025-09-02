@@ -62,9 +62,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
           }}
         />
       </head>
-      <body style={{ paddingBottom: "80px" }}>
+      <body
+        style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      >
         <NavBar />
-        {children}
+        <main style={{ flex: "1" }}>{children}</main>
         <ScrollRestoration />
         <Scripts />
         <Footer />
