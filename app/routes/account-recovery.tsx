@@ -92,6 +92,10 @@ export default function AccountRecovery() {
           <Card.Title>Account Recovery</Card.Title>
           <Card.Text>
             Enter your username to search for your recovery account.
+            <br />
+            <br />
+            Note that finding your recovery account does not necessarily mean
+            that they will be able to help you recover your account.
           </Card.Text>
         </Card.Header>
         <Card.Body>
