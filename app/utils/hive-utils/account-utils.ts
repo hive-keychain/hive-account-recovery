@@ -1,9 +1,9 @@
 import * as Hive from "@hiveio/dhive";
 import { Client, PrivateKey } from "@hiveio/dhive";
-import type { IAuthorities } from "~/interfaces/account.interface";
 import bs58 from "bs58";
-import { SHA256, enc, lib } from "crypto-js";
 import { Buffer } from "buffer";
+import { SHA256, enc, lib } from "crypto-js";
+import type { IAuthorities } from "~/interfaces/account.interface";
 let client: Client;
 const getClient = () => {
   if (!client)

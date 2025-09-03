@@ -13,8 +13,8 @@ import type { Route } from "../+types/root";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Hive Change Keys" },
-    { name: "description", content: "Hive Change Keys" },
+    { title: "Change Account Keys" },
+    { name: "description", content: "Change Account Keys" },
   ];
 }
 export default function ChangeKeys() {

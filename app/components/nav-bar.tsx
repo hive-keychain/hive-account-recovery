@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Navbar, Container, Nav } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { Link } from "react-router";
 
 export default function NavBar() {
   const [expanded, setExpanded] = useState(false);
@@ -30,8 +31,12 @@ export default function NavBar() {
           />
         </Navbar.Brand>
         <Nav className="me-auto">
-          <Nav.Link href="/">Account Recovery</Nav.Link>
-          <Nav.Link href="/change-keys">Change Keys</Nav.Link>
+          <Nav.Link as={Link} to="/">
+            Change Keys
+          </Nav.Link>
+          <Nav.Link as={Link} to="/account-recovery">
+            Account Recovery
+          </Nav.Link>
         </Nav>
       </Container>
     </Navbar>
